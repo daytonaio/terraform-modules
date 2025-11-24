@@ -13,6 +13,8 @@ terraform {
 
 # Security group for the runner instance
 resource "aws_security_group" "runner" {
+  count = var.create_security_group ? 1 : 0
+
   name_prefix = "${var.name_prefix}-runner-"
   description = "Security group for Daytona Runner"
   vpc_id      = var.vpc_id
@@ -44,6 +46,11 @@ resource "aws_security_group" "runner" {
       Name = "${var.name_prefix}-runner-sg"
     }
   )
+}
+
+locals {
+  # Use provided security groups or the created one
+  security_group_ids = var.create_security_group ? concat([aws_security_group.runner[0].id], var.security_group_ids) : var.security_group_ids
 }
 
 # IAM role for the EC2 instance
@@ -78,6 +85,13 @@ resource "aws_iam_role_policy_attachment" "runner_ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+# Attach additional IAM policies
+resource "aws_iam_role_policy_attachment" "runner_additional" {
+  count      = length(var.additional_iam_policy_arns)
+  role       = aws_iam_role.runner.name
+  policy_arn = var.additional_iam_policy_arns[count.index]
+}
+
 # IAM instance profile
 resource "aws_iam_instance_profile" "runner" {
   name_prefix = "${var.name_prefix}-runner-"
@@ -96,6 +110,7 @@ data "cloudinit_config" "runner" {
   gzip          = true
   base64_encode = true
 
+  # Main Daytona runner installation part (runs first)
   part {
     filename     = "cloud-config.yaml"
     content_type = "text/cloud-config"
@@ -107,6 +122,17 @@ data "cloudinit_config" "runner" {
       poll_limit           = var.poll_limit
     })
   }
+
+  # Additional cloud-init parts (run after the main installation)
+  dynamic "part" {
+    for_each = var.additional_cloudinit_parts
+    content {
+      filename     = part.value.filename
+      content_type = part.value.content_type
+      content      = part.value.content
+      merge_type   = part.value.merge_type
+    }
+  }
 }
 
 # EC2 instance for the runner
@@ -114,7 +140,7 @@ resource "aws_instance" "runner" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   subnet_id              = var.subnet_id
-  vpc_security_group_ids = [aws_security_group.runner.id]
+  vpc_security_group_ids = local.security_group_ids
   iam_instance_profile   = aws_iam_instance_profile.runner.name
   key_name               = var.key_name
 

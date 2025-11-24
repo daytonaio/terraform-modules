@@ -17,8 +17,13 @@ output "instance_public_ip" {
 }
 
 output "security_group_id" {
-  description = "ID of the security group"
-  value       = aws_security_group.runner.id
+  description = "ID of the created security group (null if using existing security groups)"
+  value       = var.create_security_group ? aws_security_group.runner[0].id : null
+}
+
+output "security_group_ids" {
+  description = "List of all security group IDs attached to the instance"
+  value       = local.security_group_ids
 }
 
 output "iam_role_arn" {

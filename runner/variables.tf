@@ -80,14 +80,26 @@ variable "poll_limit" {
 }
 
 # Security Configuration
+variable "security_group_ids" {
+  description = "List of security group IDs to attach to the instance. If empty, a new security group will be created."
+  type        = list(string)
+  default     = []
+}
+
+variable "create_security_group" {
+  description = "Whether to create a new security group. If false, you must provide security_group_ids."
+  type        = bool
+  default     = true
+}
+
 variable "enable_ssh" {
-  description = "Enable SSH access to the instance"
+  description = "Enable SSH access to the instance (only used when create_security_group is true)"
   type        = bool
   default     = false
 }
 
 variable "ssh_cidr_blocks" {
-  description = "CIDR blocks allowed for SSH access"
+  description = "CIDR blocks allowed for SSH access (only used when create_security_group is true)"
   type        = list(string)
   default     = []
 }
@@ -96,6 +108,24 @@ variable "enable_ssm" {
   description = "Enable AWS Systems Manager Session Manager access"
   type        = bool
   default     = true
+}
+
+variable "additional_iam_policy_arns" {
+  description = "List of additional IAM policy ARNs to attach to the runner role"
+  type        = list(string)
+  default     = []
+}
+
+# Cloud-init Configuration
+variable "additional_cloudinit_parts" {
+  description = "Additional cloud-init parts to run after the main Daytona runner installation"
+  type = list(object({
+    filename     = string
+    content_type = string
+    content      = string
+    merge_type   = optional(string)
+  }))
+  default = []
 }
 
 # Tags
