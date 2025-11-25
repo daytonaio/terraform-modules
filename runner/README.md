@@ -2,10 +2,19 @@
 
 This Terraform module deploys a Daytona Runner on AWS EC2 with automated installation via cloud-init.
 
+## 📚 Documentation
+
+- **[USAGE.md](USAGE.md)** - Comprehensive usage guide with detailed examples
+- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Quick cheat sheet for common use cases
+- **README.md** (this file) - Technical reference and variable documentation
+
 ## Features
 
 - **Automated Installation**: Uses cloud-init to download and install the Daytona runner .deb package
-- **Configurable**: All runner settings can be customized via variables
+- **Fully Customizable**: Security groups, IAM policies, and cloud-init scripts can all be customized
+- **Flexible Security**: Use module-managed security groups, your own, or both
+- **Extensible IAM**: Attach additional IAM policies to the runner role
+- **Custom Bootstrap**: Add post-installation scripts via cloud-init
 
 ## Prerequisites
 
@@ -371,6 +380,18 @@ ls -la /opt/daytona/runner
 # Check binary permissions
 file /opt/daytona/runner
 ```
+
+## Additional Resources
+
+### Documentation
+- **[USAGE.md](USAGE.md)** - Complete usage guide with all customization options explained
+- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Quick reference for copy-paste examples
+- **[example/](example/)** - Working example configuration
+
+### Key Customization Features
+- **Security Groups**: Use module-managed, your own, or both ([examples](USAGE.md#1-security-group-customization))
+- **IAM Policies**: Attach additional policies to the runner role ([examples](USAGE.md#2-iam-role-customization))
+- **Cloud-Init**: Add custom post-installation scripts ([examples](USAGE.md#3-cloud-init-customization))
 
 ## License
 
