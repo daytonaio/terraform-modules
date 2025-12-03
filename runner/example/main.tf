@@ -85,6 +85,34 @@ module "daytona_runner" {
   enable_ssm = true
   enable_ssh = false
 
+  # Optional: Use existing security groups instead of creating a new one
+  # create_security_group = false
+  # security_group_ids    = ["sg-0123456789abcdef0"]
+
+  # Optional: Attach additional security groups alongside the created one
+  # security_group_ids = ["sg-0123456789abcdef0"]
+
+  # Optional: Attach additional IAM policies to the runner role
+  # additional_iam_policy_arns = [
+  #   "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+  #   "arn:aws:iam::123456789012:policy/CustomPolicy"
+  # ]
+
+  # Optional: Add custom cloud-init scripts that run after Daytona installation
+  # additional_cloudinit_parts = [
+  #   {
+  #     filename     = "post-install.sh"
+  #     content_type = "text/x-shellscript"
+  #     content      = <<-EOF
+  #       #!/bin/bash
+  #       echo "Running custom post-installation script"
+  #       apt-get install -y docker.io
+  #       systemctl enable docker
+  #     EOF
+  #     merge_type   = null
+  #   }
+  # ]
+
   tags = {
     Example = true
   }
