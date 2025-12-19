@@ -163,7 +163,6 @@ data "cloudinit_config" "runner" {
     content = templatefile("${path.module}/templates/cloud-init.yaml.tpl", {
       daytona_api_url      = var.api_url
       daytona_runner_token = jsondecode(terracurl_request.runner.response).apiKey
-      runner_version       = var.runner_version
       poll_timeout         = var.poll_timeout
       poll_limit           = var.poll_limit
     })
