@@ -10,26 +10,64 @@ packages:
   - ca-certificates
 
 write_files:
-  - path: /etc/daytona/runner.env
-    permissions: '0600'
+  - path: /etc/systemd/system/daytona-runner.service
+    permissions: '0644'
     content: |
-      # Daytona Runner Configuration
-      DAYTONA_API_URL=${daytona_api_url}
-      DAYTONA_RUNNER_TOKEN=${daytona_runner_token}
+      [Unit]
+      Description=Daytona Runner Service
+      Documentation=https://github.com/daytonaio/daytona
+      After=network.target
+      Wants=network-online.target
 
-      # Job Polling Configuration
-      DAYTONA_RUNNER_POLL_TIMEOUT=${poll_timeout}
-      DAYTONA_RUNNER_POLL_LIMIT=${poll_limit}
+      [Service]
+      Type=simple
+      User=root
+      Group=root
+      WorkingDirectory=/opt/daytona
+
+      # Binary location
+      ExecStart=/opt/daytona/runner
+
+      # Environment values
+      Environment=DAYTONA_API_URL=${daytona_api_url}
+      Environment=DAYTONA_RUNNER_TOKEN=${daytona_runner_token}
+      Environment=DAYTONA_RUNNER_POLL_TIMEOUT=${poll_timeout}
+      Environment=DAYTONA_RUNNER_POLL_LIMIT=${poll_limit}
+
+      # Restart policy
+      Restart=on-failure
+      RestartSec=5s
+
+      # Security hardening
+      NoNewPrivileges=true
+      PrivateTmp=true
+      ProtectSystem=strict
+      ProtectHome=true
+      ReadWritePaths=/var/lib/daytona/runner /var/log/daytona /tmp
+
+      # Resource limits
+      LimitNOFILE=65536
+      LimitNPROC=4096
+
+      # Logging
+      StandardOutput=journal
+      StandardError=journal
+      SyslogIdentifier=daytona-runner
+
+      [Install]
+      WantedBy=multi-user.target
+
 runcmd:
-  # Download and install Daytona runner
-  - curl -L -o /tmp/daytona-runner.deb "https://download.daytona.io/daytona-ai/runner/daytona-runner_${runner_version}_amd64.deb"
-  - dpkg -i /tmp/daytona-runner.deb || true
+  # Create runner directory
+  - mkdir -p /opt/daytona
 
-  # Enable and start the service
+  # Download runner binary from API
+  - curl -L -f -o /opt/daytona/runner "${daytona_api_url}/runner-amd64"
+  - chmod +x /opt/daytona/runner
+
+  # Reload systemd and enable/start the service
+  - systemctl daemon-reload
   - systemctl enable --now daytona-runner
-
-  # Clean up
-  - rm -f /tmp/daytona-runner.deb
 
   # Verify installation
   - systemctl status daytona-runner --no-pager

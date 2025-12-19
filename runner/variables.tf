@@ -71,12 +71,6 @@ variable "runner_name" {
   default     = null
 }
 
-variable "runner_version" {
-  description = "Daytona runner version"
-  type        = string
-  default     = "0.125.0-rc1"
-}
-
 # Runner Configuration (optional)
 variable "poll_timeout" {
   description = "Job polling timeout"
