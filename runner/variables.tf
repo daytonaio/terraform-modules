@@ -74,7 +74,7 @@ variable "runner_name" {
 variable "runner_version" {
   description = "Daytona runner version"
   type        = string
-  default     = "0.132.0"
+  default     = "0.135.0"
 }
 
 # Runner Configuration (optional)

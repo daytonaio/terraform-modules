@@ -6,7 +6,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
     terracurl = {
       source  = "devops-rob/terracurl"
@@ -190,7 +190,8 @@ resource "aws_instance" "runner" {
   iam_instance_profile   = aws_iam_instance_profile.runner.name
   key_name               = var.key_name
 
-  user_data = data.cloudinit_config.runner.rendered
+  user_data_base64            = data.cloudinit_config.runner.rendered
+  user_data_replace_on_change = false
 
   root_block_device {
     volume_type           = var.root_volume_type
@@ -209,7 +210,10 @@ resource "aws_instance" "runner" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.name_prefix}-runner"
+      Name              = "${var.name_prefix}-runner"
+      DaytonaRunnerName = local.runner_name
+      DaytonaRunnerId   = jsondecode(terracurl_request.runner.response).id
+      DaytonaRegionId     = var.region_id
     }
   )
 
@@ -217,6 +221,7 @@ resource "aws_instance" "runner" {
     ignore_changes = [
       ami,
       user_data,
+      user_data_base64,
     ]
   }
 }
