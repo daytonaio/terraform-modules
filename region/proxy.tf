@@ -115,7 +115,7 @@ resource "aws_ecs_task_definition" "proxy" {
       logDriver = "awslogs"
       options = {
         "awslogs-group"         = aws_cloudwatch_log_group.proxy[0].name
-        "awslogs-region"        = data.aws_region.current.name
+        "awslogs-region"        = data.aws_region.current.id
         "awslogs-stream-prefix" = "proxy"
       }
     }

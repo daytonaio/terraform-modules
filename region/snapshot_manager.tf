@@ -154,7 +154,7 @@ resource "aws_ecs_task_definition" "snapshot_manager" {
       },
       {
         name  = "REGISTRY_STORAGE_S3_REGION"
-        value = data.aws_region.current.name
+        value = data.aws_region.current.id
       },
       {
         name  = "REGISTRY_STORAGE_S3_BUCKET"
@@ -193,7 +193,7 @@ resource "aws_ecs_task_definition" "snapshot_manager" {
       logDriver = "awslogs"
       options = {
         "awslogs-group"         = aws_cloudwatch_log_group.snapshot_manager[0].name
-        "awslogs-region"        = data.aws_region.current.name
+        "awslogs-region"        = data.aws_region.current.id
         "awslogs-stream-prefix" = "snapshot-manager"
       }
     }

@@ -7,7 +7,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
     terracurl = {
       source  = "devops-rob/terracurl"
@@ -52,7 +52,7 @@ data "aws_ami" "daytona_runner" {
 // Create VPC using the official AWS VPC module
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.0"
+  version = "~> 6.0"
 
   name = "daytona-vpc"
   cidr = "10.0.0.0/16"
@@ -114,6 +114,6 @@ module "daytona_runner" {
   )
 
   tags = {
-    Region = var.region_name
+    DaytonaRegionName = var.region_name
   }
 }
