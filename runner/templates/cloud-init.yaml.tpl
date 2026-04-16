@@ -22,7 +22,7 @@ write_files:
       DAYTONA_RUNNER_POLL_LIMIT=${poll_limit}
 runcmd:
   # Download and install Daytona runner
-  - curl -L -o /tmp/daytona-runner.deb "https://download.daytona.io/daytona-ai/runner/daytona-runner_${runner_version}_amd64.deb"
+  - curl -L -o /tmp/daytona-runner.deb "https://github.com/daytonaio/daytona/releases/download/v${runner_version}/daytona-runner_${runner_version}_amd64.deb"
   - dpkg -i /tmp/daytona-runner.deb || true
 
   # Enable and start the service
