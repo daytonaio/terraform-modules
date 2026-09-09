@@ -16,6 +16,7 @@ write_files:
       # Daytona Runner Configuration
       DAYTONA_API_URL=${daytona_api_url}
       DAYTONA_RUNNER_TOKEN=${daytona_runner_token}
+      CONTAINER_RUNTIME=sysbox-runc
 
       # Job Polling Configuration
       DAYTONA_RUNNER_POLL_TIMEOUT=${poll_timeout}
