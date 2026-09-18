@@ -27,9 +27,10 @@ resource "terracurl_request" "region" {
   }
 
   request_body = jsonencode({
-    name          = var.name
-    proxyUrl      = var.proxy_url
-    sshGatewayUrl = var.ssh_gateway_url
+    name               = var.name
+    proxyUrl           = var.proxy_url
+    sshGatewayUrl      = var.ssh_gateway_url
+    snapshotManagerUrl = var.snapshot_manager_url
   })
 
   response_codes = [200, 201]
@@ -65,7 +66,7 @@ locals {
   snapshot_manager_domain         = local.snapshot_manager_url_regex != null ? local.snapshot_manager_url_regex[1] : null
   snapshot_manager_port           = local.snapshot_manager_url_regex != null ? (local.snapshot_manager_url_regex[2] != "" ? tonumber(local.snapshot_manager_url_regex[2]) : (local.snapshot_manager_protocol == "https" ? 443 : 80)) : null
   snapshot_manager_container_port = 5000
-  deploy_snapshot_manager         = true
+  deploy_snapshot_manager         = var.snapshot_manager_url != null
 
   deploy_ecs = local.deploy_proxy || local.deploy_ssh_gateway || local.deploy_snapshot_manager
 }
