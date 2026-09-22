@@ -42,8 +42,13 @@ variable "proxy_url" {
 // Snapshot Manager Configuration
 variable "snapshot_manager_url" {
   type        = string
-  description = "Snapshot Manager URL for the region (setting this enables Snapshot Manager deployment), e.g., https://snapshots.example.com"
-  default     = null
+  description = "Snapshot Manager URL for the region, e.g., https://snapshots.example.com. Required: the snapshot registry is infrastructure this deployment depends on."
+  nullable    = false
+
+  validation {
+    condition     = can(regex("^(https?)://([^:/]+):?([0-9]*)$", var.snapshot_manager_url))
+    error_message = "snapshot_manager_url is required for this BYOC deployment; configure the snapshot registry endpoint, e.g., https://snapshots.example.com."
+  }
 }
 
 // Runner Configuration

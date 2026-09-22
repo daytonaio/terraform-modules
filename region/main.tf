@@ -2,7 +2,7 @@
 // Licensed under the MIT License - see LICENSE file for details
 
 terraform {
-  required_version = ">= 1.0"
+  required_version = ">= 1.1" // nullable on input variables requires 1.1
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -27,9 +27,10 @@ resource "terracurl_request" "region" {
   }
 
   request_body = jsonencode({
-    name          = var.name
-    proxyUrl      = var.proxy_url
-    sshGatewayUrl = var.ssh_gateway_url
+    name               = var.name
+    proxyUrl           = var.proxy_url
+    sshGatewayUrl      = var.ssh_gateway_url
+    snapshotManagerUrl = var.snapshot_manager_url
   })
 
   response_codes = [200, 201]
@@ -60,7 +61,7 @@ locals {
   deploy_ssh_gateway         = var.ssh_gateway_url != null
 
   // Parse snapshot manager URL: https://snapshot-manager.example.com:8080 -> protocol, domain, port
-  snapshot_manager_url_regex      = var.snapshot_manager_url != null ? regex("^(https?)://([^:/]+):?([0-9]*)$", var.snapshot_manager_url) : null
+  snapshot_manager_url_regex      = regex("^(https?)://([^:/]+):?([0-9]*)$", var.snapshot_manager_url)
   snapshot_manager_protocol       = local.snapshot_manager_url_regex != null ? local.snapshot_manager_url_regex[0] : null
   snapshot_manager_domain         = local.snapshot_manager_url_regex != null ? local.snapshot_manager_url_regex[1] : null
   snapshot_manager_port           = local.snapshot_manager_url_regex != null ? (local.snapshot_manager_url_regex[2] != "" ? tonumber(local.snapshot_manager_url_regex[2]) : (local.snapshot_manager_protocol == "https" ? 443 : 80)) : null
