@@ -2,7 +2,7 @@
 // Licensed under the MIT License - see LICENSE file for details
 
 terraform {
-  required_version = ">= 1.0"
+  required_version = ">= 1.1" // nullable on input variables requires 1.1
   required_providers {
     aws = {
       source  = "hashicorp/aws"
