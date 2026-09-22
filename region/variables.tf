@@ -31,8 +31,13 @@ variable "ssh_gateway_url" {
 
 variable "snapshot_manager_url" {
   type        = string
-  description = "Snapshot Manager URL for the region (setting this enables Snapshot Manager deployment), e.g., https://snapshot-manager.example.com"
-  default     = null
+  description = "Snapshot Manager URL for the region, e.g., https://snapshot-manager.example.com. Required: the snapshot registry is infrastructure this deployment depends on, not an optional feature."
+  nullable    = false
+
+  validation {
+    condition     = can(regex("^(https?)://([^:/]+):?([0-9]*)$", var.snapshot_manager_url))
+    error_message = "snapshot_manager_url is required for this BYOC deployment; configure the snapshot registry endpoint, e.g., https://snapshot-manager.example.com."
+  }
 }
 
 // VPC Configuration for ECS
