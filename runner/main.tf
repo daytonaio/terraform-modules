@@ -190,7 +190,7 @@ resource "aws_instance" "runner" {
   iam_instance_profile   = aws_iam_instance_profile.runner.name
   key_name               = var.key_name
 
-  user_data_base64            = data.cloudinit_config.runner.rendered
+  user_data_base64            = sensitive(data.cloudinit_config.runner.rendered)
   user_data_replace_on_change = false
 
   root_block_device {
@@ -213,7 +213,7 @@ resource "aws_instance" "runner" {
       Name              = "${var.name_prefix}-runner"
       DaytonaRunnerName = local.runner_name
       DaytonaRunnerId   = jsondecode(terracurl_request.runner.response).id
-      DaytonaRegionId     = var.region_id
+      DaytonaRegionId   = var.region_id
     }
   )
 
